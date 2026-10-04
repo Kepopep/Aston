@@ -10,11 +10,14 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.logging.Level;
 
 public class UserDaoImpl implements UserDao {
     private static final Logger logger = LoggerFactory.getLogger(UserDaoImpl.class);
-    private static final SessionFactory factory = HibernateUtil.getSessionFactory();
+    private final SessionFactory factory;
+
+    public UserDaoImpl(SessionFactory factory) {
+        this.factory = factory;
+    }
 
     @Override
     public User save(User user) {
