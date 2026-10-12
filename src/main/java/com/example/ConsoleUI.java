@@ -1,3 +1,5 @@
+package com.example;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,15 +11,12 @@ public class ConsoleUI {
     private static final Logger logger = LoggerFactory.getLogger(ConsoleUI.class);
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 
-    private final UserService userService;
+    private UserService userService;
     private final Scanner scanner = new Scanner(System.in);
     private boolean running = true;
 
-    public ConsoleUI(UserService userService) {
+    public void run(UserService userService) {
         this.userService = userService;
-    }
-
-    public void run() {
         System.out.println("=== Управление пользователями ===");
         while (running) {
             printMenu();
