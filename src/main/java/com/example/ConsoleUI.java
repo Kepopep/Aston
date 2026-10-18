@@ -2,21 +2,30 @@ package com.example;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
-public class ConsoleUI {
+@Component
+@ConditionalOnProperty(name = "app.console.enabled", havingValue = "true")
+public class ConsoleUI implements CommandLineRunner {
     private static final Logger logger = LoggerFactory.getLogger(ConsoleUI.class);
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 
-    private UserService userService;
+    private final UserService userService;
     private final Scanner scanner = new Scanner(System.in);
     private boolean running = true;
 
-    public void run(UserService userService) {
+    public ConsoleUI(UserService userService) {
         this.userService = userService;
+    }
+
+    @Override
+    public void run(String... args) {
         System.out.println("=== Управление пользователями ===");
         while (running) {
             printMenu();

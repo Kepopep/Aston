@@ -30,11 +30,11 @@ class UserServiceTest {
             return user;
         });
 
-        User saved = userService.save("1", "2", 3);
+        User saved = userService.save("1", "user@mail.ru", 3);
 
         assertEquals(1L, saved.getId(), "Неверный id");
         assertEquals("1", saved.getName(), "Неверное name");
-        assertEquals("2", saved.getEmail(), "Неверный email");
+        assertEquals("user@mail.ru", saved.getEmail(), "Неверный email");
         assertEquals(3, saved.getAge(), "Неверный age");
         verify(userDao).save(any(User.class));
     }
