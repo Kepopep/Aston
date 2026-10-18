@@ -1,4 +1,6 @@
-package DTO;
+package com.example.DTO;
+
+import com.example.User;
 
 public record UserResponseDto(
         Long id,

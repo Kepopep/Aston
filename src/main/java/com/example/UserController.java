@@ -1,4 +1,8 @@
+package com.example;
 
+import com.example.DTO.CreateUserRequest;
+import com.example.DTO.UpdateUserRequest;
+import com.example.DTO.UserResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

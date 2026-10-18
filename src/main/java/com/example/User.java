@@ -1,3 +1,5 @@
+package com.example;
+
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
