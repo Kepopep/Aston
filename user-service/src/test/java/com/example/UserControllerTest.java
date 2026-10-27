@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -16,7 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
-@Import(ApiExceptionHandler.class)
+@Import({ApiExceptionHandler.class, UserModelAssembler.class})
 class UserControllerTest {
 
     @Autowired
@@ -43,11 +44,14 @@ class UserControllerTest {
                                 """))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(
-                        MediaType.APPLICATION_JSON))
+                        MediaTypes.HAL_JSON))
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name").value("Ivan"))
                 .andExpect(jsonPath("$.email").value("ivan@example.com"))
-                .andExpect(jsonPath("$.age").value(25));
+                .andExpect(jsonPath("$.age").value(25))
+                .andExpect(jsonPath("$._links.self.href").value(
+                        org.hamcrest.Matchers.endsWith("/api/users/1")))
+                .andExpect(jsonPath("$._links.users.href").exists());
 
         verify(userService).save("Ivan", "ivan@example.com", 25);
     }
@@ -80,11 +84,12 @@ class UserControllerTest {
 
         mockMvc.perform(get("/api/users"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].name").value("Ivan"))
-                .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[1].name").value("Anna"));
+                .andExpect(jsonPath("$._embedded.userResponseDtoList.length()").value(2))
+                .andExpect(jsonPath("$._embedded.userResponseDtoList[0].id").value(1))
+                .andExpect(jsonPath("$._embedded.userResponseDtoList[0].name").value("Ivan"))
+                .andExpect(jsonPath("$._embedded.userResponseDtoList[1].id").value(2))
+                .andExpect(jsonPath("$._embedded.userResponseDtoList[1].name").value("Anna"))
+                .andExpect(jsonPath("$._links.self.href").exists());
 
         verify(userService).findAll();
     }
@@ -95,7 +100,8 @@ class UserControllerTest {
 
         mockMvc.perform(get("/api/users"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(0));
+                .andExpect(jsonPath("$._embedded").doesNotExist())
+                .andExpect(jsonPath("$._links.self.href").exists());
     }
 
     @Test
